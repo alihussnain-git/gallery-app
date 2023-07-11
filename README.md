@@ -5,7 +5,7 @@ Make sure you have completed the [React Native - Environment Setup](https://reac
 
 ## Installation
 
--   run `yarn`
+run `yarn`
 This command will install all packages and prepare the development environment to run the app.
 ```
 for building ios after yarn install run 
@@ -55,7 +55,7 @@ yarn lint
 - Create a gallery app using https://picsum.photos images
 - Implemented responsive image gallery for all android and iOS devices
 - Implemented CRUD functionality for comments with redux toolkit with a complete UX.
-- added test coverage using jest and react-native test library
+- added test coverage using jest and react-native testing library
 
 ## Improvements
 
