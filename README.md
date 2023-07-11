@@ -1,4 +1,9 @@
-# Prerequisites
+# Soniq coding challenge Gallery app
+
+<img width="1561" alt="Screenshot 2023-07-11 at 12 43 28" src="https://github.com/alihussnain-git/soniq-coding-challenge-gallery-app/assets/58841397/1ac8d3d5-9672-4b7a-ab2b-c9b51a7e3a1b">
+
+
+## Prerequisites
 
 Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup)
 
@@ -50,6 +55,9 @@ yarn test
 ```
 yarn lint
 ```
+
+## Task
+https://github.com/servicepartnerone/mobile-coding-challenge#create-a-photo-gallery-application
 
 ## Solution
 - Create a gallery app using https://picsum.photos images
