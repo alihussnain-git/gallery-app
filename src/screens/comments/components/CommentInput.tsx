@@ -6,12 +6,15 @@ import {
   TouchableOpacity,
   Text,
   Platform,
+  Alert,
 } from 'react-native';
 import {strings} from '../../../locale/strings';
 import appTheme from '../../../theme/appTheme';
+import TestId from '../../../utils/testId';
 
 interface Props {
   sendButtonText?: string;
+  sendButtonPlaceHolder?: string;
   onSend: (text: string) => void;
   onCancel?: () => void;
   updateText?: string;
@@ -24,6 +27,7 @@ export const CommentInput: React.FC<Props> = ({
   onCancel,
   updateText,
   autoFocus,
+  sendButtonPlaceHolder,
 }) => {
   const [comment, setComment] = useState('');
 
@@ -35,36 +39,44 @@ export const CommentInput: React.FC<Props> = ({
     setComment(updateText || '');
   }, [updateText]);
 
+  const handleOnSendPress = () => {
+    const newComment = comment.trim();
+    if (!newComment) {
+      Alert.alert('Comment box is empty!', 'Please write a comment first');
+      return;
+    }
+    onSend(newComment);
+    setComment('');
+  };
+
+  const sendButtonColor = sendButtonText
+    ? appTheme.colors.blue
+    : appTheme.colors.black;
   return (
     <>
       <View style={styles.inputContainer}>
         <TextInput
-          testID="comment-input"
+          testID={TestId.commentInput}
           style={styles.commentsInput}
-          placeholder="Enter a comment"
+          placeholder={sendButtonPlaceHolder || 'Enter a comment'}
           value={comment}
           onChangeText={handleTextChange}
           autoFocus={autoFocus}
         />
         <TouchableOpacity
-          testID="send-button"
+          testID={TestId.sendCommentButton}
           hitSlop={appTheme.spacing.xSmall}
-          onPress={() => {
-            onSend(comment);
-            setComment('');
-          }}>
+          onPress={handleOnSendPress}>
           <Text
             style={{
-              color: sendButtonText
-                ? appTheme.colors.blue
-                : appTheme.colors.black,
+              color: sendButtonColor,
             }}>
             {sendButtonText || strings.commentsInput.send}
           </Text>
         </TouchableOpacity>
         {onCancel && (
           <TouchableOpacity
-            testID="cancel-button"
+            testID={TestId.cancelCommentButton}
             style={{marginStart: appTheme.spacing.xxSmall}}
             hitSlop={appTheme.spacing.xSmall}
             onPress={onCancel}>

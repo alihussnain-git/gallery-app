@@ -24,6 +24,7 @@ export const CommentItem: React.FC<Props> = ({comment, onDelete, onUpdate}) => {
           }}
           sendButtonText="Update"
           updateText={comment}
+          sendButtonPlaceHolder="Update your comment"
           autoFocus
         />
       ) : (

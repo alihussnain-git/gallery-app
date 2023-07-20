@@ -8,6 +8,7 @@ import {
   ImageStyle,
   ImageSourcePropType,
 } from 'react-native';
+import TestId from '../utils/testId';
 
 interface Props {
   source: ImageSourcePropType;
@@ -26,7 +27,7 @@ const CustomImage: React.FC<Props> = ({source, style, testID}) => {
     <View style={[styles.container, style]}>
       {isImageLoading && (
         <ActivityIndicator
-          testID="image-loading-indicator"
+          testID={TestId.imageLoadingIndicator}
           style={styles.imageLoader}
         />
       )}

@@ -1,7 +1,7 @@
 enum TestId {
   loadingIndicator = 'loading-indicator',
   galleryImage = 'gallery-image-item',
-  imageModal = 'full-image-model',
+  imageModal = 'full-image-modal',
   openCommentsButton = 'open-comments-button',
   imageLoadingIndicator = 'image-loading-indicator',
   commentsList = 'comment-list',
@@ -10,6 +10,7 @@ enum TestId {
   commentInput = 'comment-input',
   deleteCommentButton = 'delete-comment',
   cancelCommentButton = 'cancel-button',
+  fullSizeGalleryImage = 'modal-image',
 }
 
 export default TestId;

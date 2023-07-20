@@ -3,7 +3,6 @@ import {
   StyleSheet,
   FlatList,
   ListRenderItem,
-  Alert,
   Text,
   Keyboard,
   KeyboardAvoidingView,
@@ -22,6 +21,7 @@ import {strings} from '../../locale/strings';
 import {CommentItem} from './components/CommentItem';
 import {CommentInput} from './components/CommentInput';
 import TestId from '../../utils/testId';
+import {showDeleteConfirmation} from '../../utils/showDeleteConfirmation';
 
 const CommentsScreen: React.FC<NavigationProps> = ({route}) => {
   const {id} = route.params;
@@ -34,27 +34,13 @@ const CommentsScreen: React.FC<NavigationProps> = ({route}) => {
   // Callback function to handle adding a new comment
   const handleAddComment = useCallback(
     (comment: string) => {
-      const newComment = comment.trim();
-      if (newComment) {
-        if (comments?.length) {
-          dispatch(
-            populateComment({
-              id: id,
-              comments: [...comments, newComment],
-            }),
-          );
-        } else {
-          dispatch(
-            populateComment({
-              id: id,
-              comments: [newComment],
-            }),
-          );
-        }
-        Keyboard.dismiss();
-        return;
-      }
-      Alert.alert('Comment box is empty!', 'Please write a comment first');
+      dispatch(
+        populateComment({
+          id: id,
+          comments: [...(comments || []), comment],
+        }),
+      );
+      Keyboard.dismiss();
     },
     [dispatch, id, comments],
   );
@@ -62,16 +48,14 @@ const CommentsScreen: React.FC<NavigationProps> = ({route}) => {
   // Callback function to handle updating a comment
   const handleUpdateComment = useCallback(
     (comment: string, indexToUpdate: number) => {
-      if (comments) {
-        const updatedComments = [...comments];
-        updatedComments[indexToUpdate] = comment;
-        dispatch(
-          populateComment({
-            id: id,
-            comments: [...updatedComments],
-          }),
-        );
-      }
+      const updatedComments = [...comments];
+      updatedComments[indexToUpdate] = comment;
+      dispatch(
+        populateComment({
+          id: id,
+          comments: updatedComments,
+        }),
+      );
     },
     [dispatch, comments, id],
   );
@@ -80,30 +64,19 @@ const CommentsScreen: React.FC<NavigationProps> = ({route}) => {
   const handleDeleteComment = useCallback(
     (indexToDelete: number) => {
       if (comments) {
-        Alert.alert(
-          'Delete Comment',
-          'Are you sure you want to delete this comment?',
-          [
-            {
-              text: 'Cancel',
-              style: 'cancel',
-            },
-            {
-              text: 'Delete',
-              style: 'destructive',
-              onPress: () => {
-                const updatedComments = [...comments];
-                updatedComments.splice(indexToDelete, 1);
-                dispatch(
-                  populateComment({
-                    id: id,
-                    comments: [...updatedComments],
-                  }),
-                );
-              },
-            },
-          ],
-        );
+        showDeleteConfirmation(onDeleteConfirm);
+
+        function onDeleteConfirm() {
+          const updatedComments = comments.filter(
+            (_, index) => index !== indexToDelete,
+          );
+          dispatch(
+            populateComment({
+              id: id,
+              comments: updatedComments,
+            }),
+          );
+        }
       }
     },
     [dispatch, id, comments],

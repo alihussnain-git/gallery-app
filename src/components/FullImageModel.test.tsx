@@ -41,7 +41,7 @@ describe('FullImageModel', () => {
     expect(commentsButton).toBeTruthy();
 
     // Assert that the image is rendered
-    const modalImage = getByTestId('modal-image');
+    const modalImage = getByTestId(TestId.fullSizeGalleryImage);
     expect(modalImage).toBeTruthy();
   });
 

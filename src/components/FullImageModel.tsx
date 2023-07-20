@@ -48,7 +48,7 @@ const FullImageModel: React.FC<Props> = ({
           </TouchableOpacity>
           {image && (
             <CustomImage
-              testID="modal-image"
+              testID={TestId.fullSizeGalleryImage}
               style={styles.modalImage}
               source={{uri: image.download_url}}
             />
