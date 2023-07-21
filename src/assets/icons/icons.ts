@@ -1,7 +1,7 @@
 import {ImageSourcePropType} from 'react-native';
 
 const icons: IImages = {
-  logo: require('./soniq_logo.png'),
+  logo: require('./logo.png'),
 };
 
 type ImageSrc = ImageSourcePropType;
