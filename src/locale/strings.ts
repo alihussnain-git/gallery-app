@@ -1,6 +1,6 @@
 export const strings = {
   galleryScreen: {
-    appTitle: 'Soniq coding challenge Gallery app',
+    appTitle: 'Picsum photos Gallery app',
     noImagesAvailable: 'No images available.',
     somethingWentWrong: 'Something went wrong!',
     checkInternetConnection:

@@ -1,4 +1,5 @@
 # Image Gallery app
+<img width="491" alt="Screenshot 2023-07-21 at 17 08 49" src="https://github.com/alihussnain-git/gallery-app/assets/58841397/997c19f2-abec-48fb-99ab-80383434863a">
 
 
 ## Prerequisites
