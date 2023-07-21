@@ -1,6 +1,4 @@
-# Soniq coding challenge Gallery app
-
-<img width="1561" alt="Screenshot 2023-07-11 at 12 43 28" src="https://github.com/alihussnain-git/soniq-coding-challenge-gallery-app/assets/58841397/1ac8d3d5-9672-4b7a-ab2b-c9b51a7e3a1b">
+# Image Gallery app
 
 
 ## Prerequisites
@@ -56,9 +54,6 @@ yarn test
 yarn lint
 ```
 
-## Task
-https://github.com/servicepartnerone/mobile-coding-challenge#create-a-photo-gallery-application
-
 ## Solution
 - Create a gallery app using https://picsum.photos images
 - Implemented responsive image gallery for all android and iOS devices
@@ -66,8 +61,6 @@ https://github.com/servicepartnerone/mobile-coding-challenge#create-a-photo-gall
 - added test coverage using jest and react-native testing library
 
 ## Improvements
-
-If I could have more time I would like to do following in this app:
 
 - 12-Factor approach: Using react-native-config to for environment setting like staging, prod etc. Currently base url is hard coded in environment.ts
 - Pagination: Pagination to load more images as user scrolls down
