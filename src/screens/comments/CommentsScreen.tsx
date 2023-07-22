@@ -9,11 +9,7 @@ import {
   Platform,
 } from 'react-native';
 import {useSelector, useDispatch} from 'react-redux';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {
-  commentsSelector,
-  populateComment,
-} from '../../redux/slices/commentsSlice';
+import {addComment, commentsSelector} from '../../redux/slices/commentsSlice';
 import {NavigationProps} from '../../navigation/RootNavigator';
 import appTheme from '../../theme/appTheme';
 import {RootState} from '../../redux/store';
@@ -21,7 +17,6 @@ import {strings} from '../../locale/strings';
 import {CommentItem} from './components/CommentItem';
 import {CommentInput} from './components/CommentInput';
 import TestId from '../../utils/testId';
-import {showDeleteConfirmation} from '../../utils/showDeleteConfirmation';
 
 const CommentsScreen: React.FC<NavigationProps> = ({route}) => {
   const {id} = route.params;
@@ -35,7 +30,7 @@ const CommentsScreen: React.FC<NavigationProps> = ({route}) => {
   const handleAddComment = useCallback(
     (comment: string) => {
       dispatch(
-        populateComment({
+        addComment({
           id: id,
           comments: [...(comments || []), comment],
         }),
@@ -45,85 +40,39 @@ const CommentsScreen: React.FC<NavigationProps> = ({route}) => {
     [dispatch, id, comments],
   );
 
-  // Callback function to handle updating a comment
-  const handleUpdateComment = useCallback(
-    (comment: string, indexToUpdate: number) => {
-      const updatedComments = [...comments];
-      updatedComments[indexToUpdate] = comment;
-      dispatch(
-        populateComment({
-          id: id,
-          comments: updatedComments,
-        }),
-      );
-    },
-    [dispatch, comments, id],
-  );
-
-  // Callback function to handle deleting a comment
-  const handleDeleteComment = useCallback(
-    (indexToDelete: number) => {
-      if (comments) {
-        showDeleteConfirmation(onDeleteConfirm);
-
-        function onDeleteConfirm() {
-          const updatedComments = comments.filter(
-            (_, index) => index !== indexToDelete,
-          );
-          dispatch(
-            populateComment({
-              id: id,
-              comments: updatedComments,
-            }),
-          );
-        }
-      }
-    },
-    [dispatch, id, comments],
-  );
-
   // Render item function for the comment list
   const renderItem = useCallback<ListRenderItem<string>>(
     ({item, index}) => {
-      return (
-        <CommentItem
-          key={index}
-          onDelete={() => handleDeleteComment(index)}
-          onUpdate={comment => handleUpdateComment(comment, index)}
-          comment={item}
-        />
-      );
+      return <CommentItem index={index} id={id} key={index} comment={item} />;
     },
-    [handleDeleteComment, handleUpdateComment],
+    [id],
   );
 
   const hasNoComments = !comments || comments.length === 0;
   return (
-    <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 108 : 0}
-        behavior={Platform.OS === 'android' ? undefined : 'padding'}
-        style={styles.container}>
-        {hasNoComments && (
-          <>
-            <Text style={styles.emptyText}>
-              {strings.commentScreen.noComments}
-            </Text>
-            <Text style={styles.emptySubText}>
-              {strings.commentScreen.beTheFirst}
-            </Text>
-          </>
-        )}
-        <FlatList
-          testID={TestId.commentsList}
-          data={comments}
-          showsVerticalScrollIndicator={false}
-          renderItem={renderItem}
-          keyExtractor={(_, index) => index.toString()}
-        />
-        <CommentInput onSend={handleAddComment} />
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+    <KeyboardAvoidingView
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 108 : 0}
+      behavior={Platform.OS === 'android' ? undefined : 'padding'}
+      style={styles.container}>
+      {hasNoComments && (
+        <>
+          <Text style={styles.emptyText}>
+            {strings.commentScreen.noComments}
+          </Text>
+          <Text style={styles.emptySubText}>
+            {strings.commentScreen.beTheFirst}
+          </Text>
+        </>
+      )}
+      <FlatList
+        testID={TestId.commentsList}
+        data={comments}
+        showsVerticalScrollIndicator={false}
+        renderItem={renderItem}
+        keyExtractor={(_, index) => index.toString()}
+      />
+      <CommentInput onSend={handleAddComment} />
+    </KeyboardAvoidingView>
   );
 };
 
@@ -132,6 +81,7 @@ export default CommentsScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    marginBottom: appTheme.spacing.medium,
   },
   emptyText: {
     textAlign: 'center',

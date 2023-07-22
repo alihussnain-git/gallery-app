@@ -4,22 +4,30 @@ import {CommentInput} from './CommentInput';
 import appTheme from '../../../theme/appTheme';
 import TestId from '../../../utils/testId';
 import {strings} from '../../../locale/strings';
+import {
+  deleteComment,
+  updateComment,
+} from '../../../redux/slices/commentsSlice';
+import {useDispatch} from 'react-redux';
+import {showDeleteConfirmation} from '../../../utils/showDeleteConfirmation';
 
 interface Props {
   comment: string;
-  onDelete: () => void;
-  onUpdate: (text: string) => void;
+  id: string;
+  index: number;
 }
 
-export const CommentItem: React.FC<Props> = ({comment, onDelete, onUpdate}) => {
+export const CommentItem: React.FC<Props> = ({comment, id, index}) => {
   const [isEditMode, setIsEditMode] = useState(false);
+  const dispatch = useDispatch();
+
   return (
     <>
       {isEditMode ? (
         <CommentInput
           onCancel={() => setIsEditMode(false)}
           onSend={text => {
-            onUpdate(text);
+            dispatch(updateComment({id, comment: text, indexToUpdate: index}));
             setIsEditMode(false);
           }}
           sendButtonText="Update"
@@ -39,7 +47,12 @@ export const CommentItem: React.FC<Props> = ({comment, onDelete, onUpdate}) => {
             </TouchableOpacity>
             <TouchableOpacity
               testID={TestId.deleteCommentButton}
-              onPress={onDelete}
+              onPress={() => {
+                showDeleteConfirmation(onDeleteConfirm);
+                function onDeleteConfirm() {
+                  dispatch(deleteComment({id, indexToDelete: index}));
+                }
+              }}
               style={styles.editDeleteCTA}>
               <Text style={{color: appTheme.colors.red}}>
                 {strings.commentScreen.delete}

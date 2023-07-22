@@ -2,78 +2,113 @@ import React from 'react';
 import {render, fireEvent} from '@testing-library/react-native';
 import {CommentItem} from './CommentItem';
 import TestId from '../../../utils/testId';
+import configureStore from 'redux-mock-store';
+import {Alert} from 'react-native';
+import {Provider} from 'react-redux';
+
+const mockStore = configureStore([]);
+
+const comment = 'This is a comment';
+const store = mockStore({
+  comments: {
+    '0': ['Comment 1', 'Comment 2'],
+  },
+});
 
 describe('CommentItem', () => {
   it('renders the comment text', () => {
-    const comment = 'This is a comment';
     const {getByText} = render(
-      <CommentItem
-        comment={comment}
-        onDelete={jest.fn()}
-        onUpdate={jest.fn()}
-      />,
+      <Provider store={store}>
+        <CommentItem index={0} id={'0'} comment={comment} />,
+      </Provider>,
     );
 
     expect(getByText(comment)).toBeTruthy();
   });
 
-  it('calls the onDelete function when delete button is pressed', () => {
-    const onDelete = jest.fn();
+  it('updates a comment', async () => {
+    const updateStore = mockStore({
+      comments: {
+        '0': ['Comment 1', 'Comment 2'],
+      },
+    });
     const {getByTestId} = render(
-      <CommentItem
-        comment="Some comment"
-        onDelete={onDelete}
-        onUpdate={jest.fn()}
-      />,
+      <Provider store={updateStore}>
+        <CommentItem index={0} id={'0'} comment={comment} />,
+      </Provider>,
+    );
+    const editButtons = await getByTestId(TestId.editCommentButton);
+    fireEvent.press(editButtons);
+
+    const updatedCommentInput = await getByTestId(TestId.commentInput);
+    expect(updatedCommentInput).toBeTruthy();
+    const updateButton = await getByTestId(TestId.sendCommentButton);
+
+    fireEvent.changeText(updatedCommentInput, 'Updated comment');
+    fireEvent.press(updateButton);
+
+    const actions = updateStore.getActions();
+    expect(actions).toEqual([
+      {
+        type: 'comments/updateComment',
+        payload: {
+          id: '0',
+          indexToUpdate: 0,
+          comment: 'Updated comment',
+        },
+      },
+    ]);
+  });
+
+  it('deletes a comment', async () => {
+    // Mock the Alert.alert function
+    const mockAlert = jest.spyOn(Alert, 'alert');
+    mockAlert.mockImplementation((title, message, buttons) => {
+      // Simulate pressing the "Delete" button
+      if (buttons && buttons.length >= 2) {
+        // Simulate pressing the "Delete" button
+        buttons[1].onPress?.();
+      }
+    });
+
+    const {getByTestId} = render(
+      <Provider store={store}>
+        <CommentItem index={0} id={'0'} comment={comment} />,
+      </Provider>,
     );
 
-    fireEvent.press(getByTestId(TestId.deleteCommentButton));
+    const deleteButton = await getByTestId(TestId.deleteCommentButton);
+    fireEvent.press(deleteButton);
 
-    expect(onDelete).toHaveBeenCalledTimes(1);
+    const actions = store.getActions();
+    expect(actions).toEqual([
+      {
+        type: 'comments/deleteComment',
+        payload: {
+          id: '0',
+          indexToDelete: 0,
+        },
+      },
+    ]);
   });
 
   it('switches to edit mode when edit button is pressed', () => {
-    const onUpdate = jest.fn();
-    const {getByTestId, getByText} = render(
-      <CommentItem
-        comment="Some comment"
-        onDelete={jest.fn()}
-        onUpdate={onUpdate}
-      />,
-    );
-
-    fireEvent.press(getByTestId(TestId.editCommentButton));
-
-    expect(getByText('Update')).toBeTruthy();
-  });
-
-  it('calls the onUpdate function with updated text when updated', () => {
-    const onUpdate = jest.fn();
     const {getByTestId} = render(
-      <CommentItem
-        comment="Some comment"
-        onDelete={jest.fn()}
-        onUpdate={onUpdate}
-      />,
+      <Provider store={store}>
+        <CommentItem index={0} id={'0'} comment={comment} />,
+      </Provider>,
     );
 
     fireEvent.press(getByTestId(TestId.editCommentButton));
-    fireEvent.changeText(getByTestId(TestId.commentInput), 'Updated comment');
-    fireEvent.press(getByTestId(TestId.sendCommentButton));
-
-    expect(onUpdate).toHaveBeenCalledWith('Updated comment');
+    expect(getByTestId(TestId.commentInput)).toBeTruthy();
   });
 
   it('cancels edit mode when cancel button is pressed', () => {
-    const onUpdate = jest.fn();
     const {getByTestId, queryByTestId} = render(
-      <CommentItem
-        comment="Some comment"
-        onDelete={jest.fn()}
-        onUpdate={onUpdate}
-      />,
+      <Provider store={store}>
+        <CommentItem index={0} id={'0'} comment={comment} />,
+      </Provider>,
     );
-
     fireEvent.press(getByTestId(TestId.editCommentButton));
     fireEvent.press(getByTestId(TestId.cancelCommentButton));
 
